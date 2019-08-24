@@ -11,7 +11,12 @@ public enum Blocks {
     COBBLESTONE,
     OAK_PLANKS,
     OAK_SAPLING,
-    BEDROCK
+    BEDROCK,
+    GRASS_BLOCK,
+    BRICK_WALL,
+    BRICKS,
+    OAK_LOG,
+    BIRCH_LOG,
     ;
 
     private Image texture;

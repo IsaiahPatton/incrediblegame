@@ -13,5 +13,13 @@ public class Location {
     public String toString() {
         return x + "-" + y;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Location))
+            return false;
+        Location l = (Location) o;
+        return l.x == this.x && l.y == this.y;
+    }
 
 }

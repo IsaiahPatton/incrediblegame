@@ -11,7 +11,7 @@ import com.zunozap.games.World;
 
 public abstract class Entity implements IDrawable {
 
-    public int x, y;
+    public int x=8, y=32;
     public BufferedImage texture;
     public boolean isJumping;
     public World world;
