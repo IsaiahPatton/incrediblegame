@@ -27,7 +27,6 @@ public class MainMenu extends JPanel {
         // TODO
         mp.setEnabled(false);
         st.setEnabled(false);
-        cred.setEnabled(false);
     }
 
     @Override

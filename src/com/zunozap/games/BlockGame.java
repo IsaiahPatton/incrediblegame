@@ -21,12 +21,13 @@ import javax.swing.JPanel;
 import com.zunozap.games.entities.Entity;
 import com.zunozap.games.entities.Player;
 import com.zunozap.games.entities.Zombie;
+import com.zunozap.games.menu.CreditsMenu;
 import com.zunozap.games.menu.MainMenu;
 
 public class BlockGame extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    public static int renderTime;
+    public static long renderTime;
 
     public static World world;   // The only world
     public static Player player; // The only player
@@ -34,6 +35,7 @@ public class BlockGame extends JFrame {
     public static boolean isRendering;
     public boolean debugInfo;
 
+    private MainMenu menu;
     private static BlockGame game;
     public static BlockGame getGame() {
         return game;
@@ -42,14 +44,24 @@ public class BlockGame extends JFrame {
     public BlockGame() {
         BlockGame.game = this;
 
-        MainMenu menu = new MainMenu();
+        menu = new MainMenu();
         menu.sp.addActionListener(l -> startGame());
+        menu.cred.addActionListener(l -> {
+            this.setContentPane(new CreditsMenu()); 
+            this.validate();
+        });
 
+        this.setTitle("BlockGame");
         this.setContentPane(menu);
         this.setDefaultCloseOperation(3);
-        this.setSize(864, 576);
+        this.setSize(864, 575);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+    
+    public void backToMainMenu() {
+        this.setContentPane(menu);
+        this.validate();
     }
 
     public void startGame() {
@@ -89,8 +101,7 @@ public class BlockGame extends JFrame {
                     g.drawString("Pos/32: {" + player.x/32 + "," + player.y/32 + "}", getWidth() - 100, 80);
                 }
 
-                long end = System.currentTimeMillis();
-                renderTime = (int) (end - start);
+                renderTime = System.currentTimeMillis() - start;
                 isRendering = false;
             }
         };

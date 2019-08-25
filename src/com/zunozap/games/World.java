@@ -16,13 +16,6 @@ public class World implements IDrawable {
 
     public World() {
         locationToBlock = new HashMap<>();
-        BlockData[] dat = {
-                new BlockData(0, 2, 1),
-                new BlockData(1, 2, 1),
-                new BlockData(2, 2, 2)};
-
-        for (BlockData b : dat)
-            locationToBlock.put(new Location(b.x, b.y).toString(), b);
     }
 
     public void setBlockAt(int x, int y, int blockType) {
@@ -41,8 +34,12 @@ public class World implements IDrawable {
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 BlockData dat = locationToBlock.getOrDefault(w + "-" + h, null);
+                int id = (h == height-1) ? Blocks.BEDROCK.getId() : 0;
+                if (h == height-2) id = 3;
+                if (h == height-3) id = 8;
+
                 if (dat == null)
-                    locationToBlock.put(new Location(w, h).toString(), new BlockData(w, h, 0));
+                    locationToBlock.put(new Location(w, h).toString(), new BlockData(w, h, id));
             }
         }
 

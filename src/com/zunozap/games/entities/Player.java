@@ -50,7 +50,8 @@ public class Player extends Entity {
     }
 
     public void respawn() {
-        x = y = 32;
+        x = 32;
+        y = 32 * 13;
     }
 
 }
