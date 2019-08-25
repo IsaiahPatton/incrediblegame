@@ -1,13 +1,20 @@
 package com.zunozap.games;
 
+import java.awt.AWTException;
 import java.awt.Graphics;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -25,6 +32,7 @@ public class BlockGame extends JFrame {
     public static Player player; // The only player
 
     public static boolean isRendering;
+    public boolean debugInfo;
 
     private static BlockGame game;
     public static BlockGame getGame() {
@@ -65,15 +73,21 @@ public class BlockGame extends JFrame {
                 for (Entity e : world.getEntities())
                     e.paint(g);
 
-                g.drawString("Render time: " + renderTime + "ms", getWidth() - 120, 15);
-                g.drawString("BlockData: " + world.locationToBlock.size(), getWidth() - 120, 30);
-                g.drawString("Looking At: " + player.getLookingAt(), getWidth() - 120, 46);
-                
                 Blocks selectedBlock = Blocks.values()[player.getSelectedBlock()];
-                g.drawString("Selected Block: ", getWidth() - 120, 65);
-                g.drawImage(selectedBlock.getTexture().getScaledInstance(16, 16, 0), getWidth() - 32, 53, null);
                 g.setFont(g.getFont().deriveFont(11f));
-                g.drawString(selectedBlock.toString(), getWidth() - selectedBlock.toString().length() * 8, 84);
+                g.drawString("Selected Block: ", getWidth() - 110, 15);
+                g.drawImage(selectedBlock.getTexture().getScaledInstance(16, 16, 0), getWidth() - 30, 2, null);
+                g.drawString(selectedBlock.toString(), getWidth() - 90, 27);
+
+                String lookingAt = player.getLookingAt();
+                if (null != lookingAt && !lookingAt.equals("AIR"))
+                    g.drawString("Looking At: " + lookingAt, getWidth() - 110, 40);
+
+                if (debugInfo) {
+                    g.drawString("Render time: " + renderTime + "ms", getWidth() - 100, 54);
+                    g.drawString("BlockData: " + world.locationToBlock.size(), getWidth() - 100, 67);
+                    g.drawString("Pos/32: {" + player.x/32 + "," + player.y/32 + "}", getWidth() - 100, 80);
+                }
 
                 long end = System.currentTimeMillis();
                 renderTime = (int) (end - start);
@@ -106,9 +120,29 @@ public class BlockGame extends JFrame {
 
                 if (e.getKeyCode() == KeyEvent.VK_SPACE)
                     player.jump();
-                
+
                 if (e.getKeyCode() == KeyEvent.VK_R)
                     player.respawn();
+
+                if (e.getKeyCode() == KeyEvent.VK_F2) {
+                    try {
+                        Robot r = new Robot();
+                        Rectangle b = getBounds();
+                        b.x += 9;
+                        b.y += 31;
+                        b.height -= 39;
+                        b.width -= 20;
+                        BufferedImage i = r.createScreenCapture(b);
+                        File dir = new File(new File(System.getProperty("user.home")), "blockgame");
+                        dir.mkdirs();
+                        ImageIO.write(i, "PNG", new File(dir, System.currentTimeMillis() + ".png"));
+                    } catch (AWTException | IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_F3)
+                    debugInfo = !debugInfo;
 
                 if (e.getKeyCode() == KeyEvent.VK_Z)
                     world.addEntity(new Zombie());
@@ -131,13 +165,11 @@ public class BlockGame extends JFrame {
                 if (mx < 0 || my < 0)
                     return;
 
-                System.out.println(e.getButton());
-                if (e.getButton() == 3) {
+                if (e.getButton() == 3)
                     world.setBlockAt(mx, my, player.getSelectedBlock());
-                }
-                if (e.getButton() == 1) {
+
+                if (e.getButton() == 1)
                     world.setBlockAt(mx, my, 0);
-                }
             }
         });
 

@@ -21,10 +21,8 @@ public class World implements IDrawable {
                 new BlockData(1, 2, 1),
                 new BlockData(2, 2, 2)};
 
-        for (BlockData b : dat) {
+        for (BlockData b : dat)
             locationToBlock.put(new Location(b.x, b.y).toString(), b);
-            System.out.println("WORLDDAT x,y : " + b.x + "," + b.y);
-        }
     }
 
     public void setBlockAt(int x, int y, int blockType) {
