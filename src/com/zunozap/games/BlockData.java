@@ -1,7 +1,10 @@
 package com.zunozap.games;
 
-public class BlockData {
+import java.io.Serializable;
 
+public class BlockData implements Serializable {
+
+    private static final long serialVersionUID = 4235475311864256946L;
     public int x, y, blockType;
 
     public BlockData(int x, int y, int blockType) {
