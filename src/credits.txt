@@ -2,11 +2,12 @@ Game
 ============
 Developed using Java Swing
 
+
 Attribution
 ============
 
 Button "Click" sound by Sheyvan from https://freesound.org/people/Sheyvan/sounds/475188/ and is released under CC 0 (Public Domain)
 
-BIRCH_LOG, BRICK_WALL, OAK_LOG, and OAK_SAPLING textures are from OpenGameArt.org and are released under CC 0 (Public Domain)
+BIRCH_LOG, OAK_LOG, LAVA, and OAK_SAPLING textures are from OpenGameArt.org and are released under CC 0 (Public Domain)
 
 Based on the game "Minecraft" by Mojang.

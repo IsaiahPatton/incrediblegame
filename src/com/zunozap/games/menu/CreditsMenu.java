@@ -48,9 +48,8 @@ public class CreditsMenu extends JPanel {
         g.setFont(new Font("Dialog", 0, 48));
         g.drawString(title, (getWidth()/2) - (title.length()*14), 60);
 
-        int btnWidth = 300;
         sp.setBounds(30, 105, getWidth() - 60, 300);
-        bac.setBounds((getWidth()/2)-btnWidth/4, 450, (btnWidth/2)-4, 40);
+        bac.setBounds((getWidth()/2) - 75, 450, 146, 40);
     }
 
 }

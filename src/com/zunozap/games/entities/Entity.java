@@ -21,12 +21,13 @@ public abstract class Entity implements IDrawable {
     public abstract BufferedImage getTexture();
 
     public void move() {
+        if (getBlockUnder() == 0)
+            y += 32;
+    }
+
+    public int getBlockUnder() {
         BlockData bd = BlockGame.world.locationToBlock.getOrDefault(new Location(x/32,((y/32)+1)).toString(), new BlockData(x/32,(y/32)+1, 0));
-        if (bd.blockType == 0) {
-            int to = y + 32;
-            while (y < to)
-                y += 1;
-        }
+        return bd.blockType;
     }
 
     public void jump() {
@@ -54,6 +55,9 @@ public abstract class Entity implements IDrawable {
 
         g.drawString(getName(), x - 6, y - 2);
         g.drawImage(texture, x, y, null);
+        int h = BlockGame.getGame().getHeight()-15;
+        while (!isJumping && getBlockUnder() == 0 && y < h-50)
+            y += 1;
     }
 
     public void sleep(int mill) {

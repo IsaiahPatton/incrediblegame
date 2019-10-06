@@ -51,6 +51,11 @@ public class Zombie extends Entity {
                     }
                 }
             }
+            while (plr.health > 0) {
+                while (new Location(this.x, this.y).equals(new Location(plr.x, plr.y))) {
+                    plr.damage(1, 800);
+                }
+            }
         }).start();
     }
 

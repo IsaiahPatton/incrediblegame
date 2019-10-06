@@ -8,34 +8,38 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import com.zunozap.games.entities.Entity;
+import com.zunozap.games.world.Blocks;
 
 public class World implements IDrawable {
 
+    public String NAME;
+
     public HashMap<String, BlockData> locationToBlock;
     public List<Entity> entities = new ArrayList<>();
-    public File file;
+    public File folder;
+    public File blockFile;
+    public File entityFile;
 
     public int width = 0, height = 0;
 
     public World() {
+        NAME = "world1";
         locationToBlock = new HashMap<>();
 
         File saves = new File(new File(System.getProperty("user.home"), "blockgame"), "saves");
         saves.mkdirs();
-        this.file = new File(saves, "world1.dat");
-        if (file.exists())
+        this.folder = new File(saves, NAME);
+        folder.mkdir();
+        this.blockFile = new File(folder, "blocks.dat");
+        this.entityFile = new File(folder, "entities.dat");
+        if (blockFile.exists())
             load();
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                save();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> save()));
     }
 
     public void setBlockAt(int x, int y, int blockType) {
@@ -54,7 +58,7 @@ public class World implements IDrawable {
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 BlockData dat = locationToBlock.getOrDefault(w + "-" + h, null);
-                int id = (h == height-1) ? Blocks.BEDROCK.getId() : 0;
+                int id = (h == height-1) ? Blocks.byName.get("Bedrock").getId() : 0;
                 if (h == height-2) id = 3;
                 if (h == height-3) id = 8;
 
@@ -64,7 +68,7 @@ public class World implements IDrawable {
         }
 
         for (BlockData i : locationToBlock.values())
-            g.drawImage(Blocks.values()[i.blockType].getTexture(), i.x * 32, i.y * 32, null);
+            g.drawImage(Blocks.getBlockById(i.blockType).getTexture(), i.x * 32, i.y * 32, null);
 
     }
 
@@ -79,46 +83,37 @@ public class World implements IDrawable {
     }
 
     @SuppressWarnings("unchecked")
-    public long load() {
-        System.out.println("Loading saved map data for world ...");
-        Date d = new Date();
+    public void load() {
+        System.out.println("Loading saved world ...");
+        long start = System.currentTimeMillis();
 
         try {
-            file.getParentFile().mkdir();
-            FileInputStream fis = new FileInputStream(file);
+            FileInputStream fis = new FileInputStream(blockFile);
             ObjectInputStream ois = new ObjectInputStream(fis);
             locationToBlock = (HashMap<String, BlockData>) ois.readObject();
             ois.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            return -999;
         }
 
-        Date d2 = new Date();
-        long ms = d2.getTime() - d.getTime();
-        System.out.println("World Saved in " + ms + "ms");
-        return ms;
+        System.out.println("Loaded world in " + (System.currentTimeMillis()-start) + "ms");
     }
 
-    public long save() {
+    public void save() {
         System.out.println("Saving world ...");
-        Date d = new Date();
+        long start = System.currentTimeMillis();
 
         try {
-            file.createNewFile();
-            FileOutputStream fos = new FileOutputStream(file);
+            blockFile.createNewFile();
+            FileOutputStream fos = new FileOutputStream(blockFile);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(locationToBlock);
             oos.close();
         } catch (IOException e) {
             e.printStackTrace();
-            return -999;
         }
 
-        Date d2 = new Date();
-        long ms = d2.getTime() - d.getTime();
-        System.out.println("Saved world in " + ms + "ms");
-        return ms;
+        System.out.println("Saved world in " + (System.currentTimeMillis()-start) + "ms");
     }
 
 }
