@@ -26,6 +26,7 @@ import com.zunozap.games.menu.CreditsMenu;
 import com.zunozap.games.menu.MainMenu;
 import com.zunozap.games.world.Block;
 import com.zunozap.games.world.Blocks;
+import com.zunozap.games.world.WorldLoadingScreen;
 
 public class BlockGame extends JFrame {
 
@@ -36,8 +37,10 @@ public class BlockGame extends JFrame {
     public static World world;   // The only world
     public static Player player; // The only player
     public FrameDisplayer inv;   // The creative inventory
+    public FrameDisplayer wload; // The world load screen
 
     public static boolean isRendering;
+    public static boolean isChanging;
     public boolean debugInfo;
     public int fps;
     private long fps2;
@@ -76,16 +79,17 @@ public class BlockGame extends JFrame {
     public void startGame() {
         this.setVisible(false);
         Blocks.addDefaultBlocks();
-        world = new World();
+        world = new World("world1");
         player = (Player) world.addEntity(new Player());
         inv = new FrameDisplayer(new CreativeInventoryFrame());
+        wload = new FrameDisplayer(new WorldLoadingScreen());
 
         render = new JPanel() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void paint(Graphics g) {
-                if (isRendering)
+                if (isRendering || isChanging)
                     return;
 
                 isRendering = true;
@@ -149,7 +153,7 @@ public class BlockGame extends JFrame {
                             for (KeyListener l : getKeyListeners())
                                 inv.addKeyListener(l);
                         inv.setVisible(!inv.isVisible());
-                        
+
                         break;
 
                     case KeyEvent.VK_R:
@@ -182,7 +186,19 @@ public class BlockGame extends JFrame {
                     case KeyEvent.VK_Z: {
                         world.addEntity(new Zombie());
                         world.addEntity(new Cow());
+                        break;
                     }
+                    case KeyEvent.VK_M:
+                        if (wload.getKeyListeners().length < getKeyListeners().length)
+                            for (KeyListener l : getKeyListeners())
+                                wload.addKeyListener(l);
+                        wload.setVisible(!wload.isVisible());
+                        // Debug
+                        //world.entities.remove(player);
+                        //world.save();
+                        //world = World.getWorld(world.NAME.endsWith("1") ? "world2" : "world1");
+                        //world.addEntity(player);
+                        break;
                 }
                 validate();
             }

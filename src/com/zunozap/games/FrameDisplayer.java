@@ -9,9 +9,13 @@ import javax.swing.JPanel;
 public class FrameDisplayer extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    private JPanel cp;
 
     public FrameDisplayer(JPanel cp) {
-        setContentPane(cp);
+        if (cp instanceof FDPanel) {
+            ((FDPanel)cp).fd = this;
+        }
+        setContentPane(this.cp = cp);
         setUndecorated(true);
         for (KeyListener l : BlockGame.getGame().getKeyListeners())
             addKeyListener(l);
@@ -20,6 +24,12 @@ public class FrameDisplayer extends JFrame {
         setSize(430, 439);
         setLocationRelativeTo(null);
         setAlwaysOnTop(true);
+    }
+    
+    @Override
+    public void setVisible(boolean flag) {
+        super.setVisible(flag);
+        cp.setVisible(flag);
     }
 
 }

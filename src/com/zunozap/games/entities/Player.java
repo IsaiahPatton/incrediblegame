@@ -4,11 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 import com.zunozap.games.BlockData;
 import com.zunozap.games.BlockGame;
 import com.zunozap.games.ResourceManager;
+import com.zunozap.games.World;
 import com.zunozap.games.menu.PlayerInvMenu;
 import com.zunozap.games.world.Block;
 import com.zunozap.games.world.Blocks;
@@ -88,8 +90,21 @@ public class Player extends Entity {
     @Override
     public void paint(Graphics g) {
        super.paint(g);
+       invOverlay.paint(g);
+       if (this.getBlockUnder() == Blocks.byName.get("World Portal").getId()) {
 
-        invOverlay.paint(g);
+           // Change World
+           BlockGame game = BlockGame.getGame();
+           game.wload.setVisible(!game.wload.isVisible());
+           //for (int z = 0; z < 1000; z++)System.out.print(z);
+           BlockGame.isChanging = true;
+           //BlockGame.world.entities.remove(this);
+           BlockGame.world.save();
+           for (int z = 0; z < 10000; z++)System.out.print(z);
+           BlockGame.world = World.getWorld(world.NAME.endsWith("1") ? "world2" : "world1");
+           BlockGame.world.addEntity(this);
+           BlockGame.isChanging = false;
+       }
     }
 
     public int getHealth() {

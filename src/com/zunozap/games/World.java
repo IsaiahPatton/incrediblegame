@@ -16,6 +16,7 @@ import com.zunozap.games.world.Blocks;
 
 public class World implements IDrawable {
 
+    private static HashMap<String, World> openWorlds = new HashMap<>();
     public String NAME;
 
     public HashMap<String, BlockData> locationToBlock;
@@ -26,8 +27,9 @@ public class World implements IDrawable {
 
     public int width = 0, height = 0;
 
-    public World() {
-        NAME = "world1";
+    public World(String name) {
+        openWorlds.put(name, this);
+        this.NAME = name;
         locationToBlock = new HashMap<>();
 
         File saves = new File(new File(System.getProperty("user.home"), "blockgame"), "saves");
@@ -40,6 +42,10 @@ public class World implements IDrawable {
             load();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> save()));
+    }
+
+    public static World getWorld(String name) {
+        return openWorlds.getOrDefault(name, new World(name));
     }
 
     public void setBlockAt(int x, int y, int blockType) {
