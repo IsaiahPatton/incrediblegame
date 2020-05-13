@@ -1,15 +1,15 @@
-    <project>
-        <modelVersion>4.0.0</modelVersion>
-      <groupId>com.zunozap.games</groupId>
-      <artifactId>blockgame</artifactId>
-      <version>indev</version>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.zunozap.games</groupId>
+    <artifactId>blockgame</artifactId>
+    <version>indev</version>
         
-        <properties>
-            <maven.compiler.source>1.8</maven.compiler.source>
-            <maven.compiler.target>1.8</maven.compiler.target>
-       </properties>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 
-      <build>
+    <build>
         <directory>${project.basedir}/target</directory>
         <outputDirectory>${project.build.directory}/classes</outputDirectory>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -27,9 +27,32 @@
             <directory>${project.basedir}/src/</directory>
           </testResource>
         </testResources>
-      </build>
+        <plugins>
+        	<plugin>
+           		<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-shade-plugin</artifactId>
+            	<version>3.2.2</version>
+            	<executions>
+                	<execution>
+                  	    <phase>package</phase>
+                   		<goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <Main-Class>me.isaiah.shell.Main</Main-Class>
+                        </transformer>
+                    </transformers>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
 
-      <profiles>
+    <profiles>
         <!-- NOTE: The release profile will be removed from future versions of the super POM -->
         <profile>
           <id>release-profile</id>
@@ -78,5 +101,5 @@
           </build>
         </profile>
       </profiles>
-     
-    </project>
+
+</project>
