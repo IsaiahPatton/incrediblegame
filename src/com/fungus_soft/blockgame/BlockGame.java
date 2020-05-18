@@ -35,8 +35,9 @@ public class BlockGame extends JFrame {
     private static JPanel render;
     public static World world;   // The only world
     public static Player player; // The only player
-    public FrameDisplayer inv;   // The creative inventory
-    public FrameDisplayer wload; // The world load screen
+    
+    public CreativeInventoryFrame inv;   // The creative inventory
+    public WorldLoadingScreen wload; // The world load screen
 
     public static boolean inGame;
     public static boolean isRendering;
@@ -77,12 +78,12 @@ public class BlockGame extends JFrame {
     }
 
     public void startGame() {
-        //this.setVisible(false);
         Blocks.addDefaultBlocks();
         world = new World("world1");
         player = (Player) world.addEntity(new Player());
-        inv = new FrameDisplayer(new CreativeInventoryFrame());
-        wload = new FrameDisplayer(new WorldLoadingScreen());
+        inv = new CreativeInventoryFrame();
+        wload = new WorldLoadingScreen();
+        this.getGlassPane().setSize(100, 100);
 
         render = new JPanel() {
             private static final long serialVersionUID = 1L;
@@ -142,9 +143,8 @@ public class BlockGame extends JFrame {
 
                     case KeyEvent.VK_B:
                     case KeyEvent.VK_E:
-                        if (inv.getKeyListeners().length < getKeyListeners().length)
-                            for (KeyListener l : getKeyListeners())
-                                inv.addKeyListener(l);
+                        inv = new CreativeInventoryFrame();
+                        setGlassPane(inv);
                         inv.setVisible(!inv.isVisible());
                         break;
 

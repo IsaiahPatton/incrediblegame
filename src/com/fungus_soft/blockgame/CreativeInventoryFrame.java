@@ -9,12 +9,11 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import com.fungus_soft.blockgame.world.Block;
 import com.fungus_soft.blockgame.world.Blocks;
 
-public class CreativeInventoryFrame extends JPanel {
+public class CreativeInventoryFrame extends FrameDisplayer {
 
     private static final long serialVersionUID = 1L;
     public boolean vis;
@@ -64,8 +63,7 @@ public class CreativeInventoryFrame extends JPanel {
             this.add(l);
         }
         this.setMinimumSize(new Dimension(200,200));
-        this.setSize(300, 300);
-        this.setOpaque(false);
+        this.setSize(400, 300);
     }
 
     @Override

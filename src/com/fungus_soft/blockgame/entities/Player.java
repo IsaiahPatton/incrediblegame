@@ -94,6 +94,7 @@ public class Player extends Entity {
            changingWorlds = true;
            // Change World
            BlockGame game = BlockGame.getGame();
+           game.setGlassPane(game.wload);
            game.wload.setVisible(!game.wload.isVisible());
            BlockGame.isChanging = true;
            BlockGame.world.save();

@@ -2,8 +2,11 @@ package com.fungus_soft.blockgame.world;
 
 import java.awt.Image;
 import java.util.Locale;
+import java.util.TimerTask;
 
+import com.fungus_soft.blockgame.BlockData;
 import com.fungus_soft.blockgame.ResourceManager;
+import com.fungus_soft.blockgame.World;
 
 public abstract class Block {
 
@@ -44,5 +47,7 @@ public abstract class Block {
     public boolean isAir() {
         return id == Blocks.byName.get("Air").getId();
     }
+
+    public void tick(World world, BlockData d, TimerTask timerTask) {}
 
 }

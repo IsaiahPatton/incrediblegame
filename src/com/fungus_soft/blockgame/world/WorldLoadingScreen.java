@@ -1,15 +1,13 @@
 package com.fungus_soft.blockgame.world;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
-import com.fungus_soft.blockgame.BlockGame;
-import com.fungus_soft.blockgame.FDPanel;
+import com.fungus_soft.blockgame.FrameDisplayer;
 
-public class WorldLoadingScreen extends FDPanel {
+public class WorldLoadingScreen extends FrameDisplayer {
 
     private static final long serialVersionUID = 1L;
     public boolean vis;
@@ -20,21 +18,13 @@ public class WorldLoadingScreen extends FDPanel {
     public WorldLoadingScreen() {
         super();
         list = new ArrayList<>();
- 
-        this.setLayout(null);
- 
-        this.setMinimumSize(new Dimension(500,200));
-        this.setSize(300, 300);
-        this.setOpaque(false);
     }
 
     @Override
     public void setVisible(boolean flag) {
         vis = flag;
-        BlockGame g = BlockGame.getGame();
-        fd.setSize(g.getWidth()-35, g.getHeight()-100);
-        fd.setLocationRelativeTo(null);
-        fd.setLocation(g.getX() + 20, g.getY() + 40);
+        setSize(500,400);
+
         super.setVisible(flag);
     }
 
@@ -44,14 +34,14 @@ public class WorldLoadingScreen extends FDPanel {
         g.setColor(Color.WHITE);
         g.setFont(g.getFont().deriveFont(32f));
         g.drawString(hover = "Loading world...", (getWidth()/2)-(hover.length()*6)-10, 100);
-        g.fillRect(220, 150, pw*4, 15);
-        if (pw < 100)
+        g.fillRect(20, 150, pw/2, 15);
+        if (pw < 800)
             pw++;
         if (z > 1) z=0;
         z++;
-        if (pw >= 100) {
+        if (pw >= 800) {
             pw = 0;
-            fd.setVisible(false);
+            setVisible(false);
         }
         this.repaint();
     }

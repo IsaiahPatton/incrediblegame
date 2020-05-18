@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.Timer;
 
@@ -54,7 +55,8 @@ public class World implements IDrawable {
     }
 
     public void setBlockAt(int x, int y, int blockType) {
-        boolean gravity = Blocks.getBlockById(blockType).hasGravity();
+        Block b = Blocks.getBlockById(blockType);
+        boolean gravity = b.hasGravity();
 
         if (gravity) {
             GravityAction ax = new GravityAction(x, y, blockType, gravity);
@@ -63,7 +65,18 @@ public class World implements IDrawable {
             t.setInitialDelay(1);
             t.start();
         } else {
-            locationToBlock.put(x + "-" + y, new BlockData(x, y, blockType));
+            BlockData d = new BlockData(x, y, blockType);
+            locationToBlock.put(x + "-" + y, d);
+            //b.tick(d);
+            java.util.Timer t = new java.util.Timer();
+            t.scheduleAtFixedRate(new TimerTask() {
+
+                @Override
+                public void run() {
+                    b.tick(World.this, d, this);
+                }
+
+            }, 20, 20);
         }
     }
 
