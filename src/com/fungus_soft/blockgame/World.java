@@ -26,7 +26,8 @@ public class World implements IDrawable {
     public String NAME;
 
     public HashMap<String, BlockData> locationToBlock;
-    public List<Entity> entities = new ArrayList<>();
+    public List<Entity> entities;
+    public List<Entity> entitiesToAdd;
     public File folder;
     public File blockFile;
     public File entityFile;
@@ -36,6 +37,8 @@ public class World implements IDrawable {
     public World(String name) {
         openWorlds.put(name, this);
         this.NAME = name;
+        entities = new ArrayList<>();
+        entitiesToAdd = new ArrayList<>();
         locationToBlock = new HashMap<>();
 
         File saves = new File(new File(System.getProperty("user.home"), "blockgame"), "saves");
@@ -54,6 +57,12 @@ public class World implements IDrawable {
         return openWorlds.getOrDefault(name, new World(name));
     }
 
+    public Block getBlockAt(int x, int y) {
+        if (x < 0 || y < 0)
+            return Blocks.getBlockById(0);
+        return Blocks.getBlockById(locationToBlock.get(x + "-" + y).blockType);
+    }
+
     public void setBlockAt(int x, int y, int blockType) {
         Block b = Blocks.getBlockById(blockType);
         boolean gravity = b.hasGravity();
@@ -67,13 +76,14 @@ public class World implements IDrawable {
         } else {
             BlockData d = new BlockData(x, y, blockType);
             locationToBlock.put(x + "-" + y, d);
-            //b.tick(d);
+
             java.util.Timer t = new java.util.Timer();
             t.scheduleAtFixedRate(new TimerTask() {
 
                 @Override
                 public void run() {
                     b.tick(World.this, d, this);
+                    if (locationToBlock.get(d.x + "-" + d.y).blockType != d.blockType) t.cancel();
                 }
 
             }, 20, 20);
@@ -113,6 +123,8 @@ public class World implements IDrawable {
         setBlockAt(l.x, l.y, blockType);
     }
 
+    boolean startTick = false;
+
     @Override
     public void paint(Graphics g) {
         if (width == 0) width = BlockGame.getGame().getWidth() / 32;
@@ -121,7 +133,7 @@ public class World implements IDrawable {
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 BlockData dat = locationToBlock.getOrDefault(w + "-" + h, null);
-                int id = (h == height-1) ? Blocks.byName.get("Bedrock").getId() : 0;
+                int id = (h == height-1) ? Blocks.byName.get("Stone").getId() : 0;
                 if (h == height-2) id = 3;
                 if (h == height-3) id = 4;
 
@@ -130,8 +142,20 @@ public class World implements IDrawable {
             }
         }
 
-        for (BlockData i : locationToBlock.values())
-            g.drawImage(Blocks.getBlockById(i.blockType).getTexture(), i.x * 32, i.y * 32, null);
+        for (BlockData i : locationToBlock.values()) {
+            g.drawImage(Blocks.getBlockById(i.blockType).getTexture(this, i), i.x * 32, i.y * 32, null);
+            if (!startTick) {
+                java.util.Timer t = new java.util.Timer();
+                t.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Blocks.getBlockById(i.blockType).tick(World.this, i, this);
+                        if (locationToBlock.get(i.x + "-" + i.y).blockType != i.blockType) t.cancel();
+                    }
+                }, 20, 20);
+            }
+        }
+        startTick = true;
     }
 
     public List<Entity> getEntities() {
@@ -139,7 +163,7 @@ public class World implements IDrawable {
     }
 
     public Entity addEntity(Entity e) {
-        this.entities.add(e);
+        this.entitiesToAdd.add(e);
         e.world = this;
         return e;
     }

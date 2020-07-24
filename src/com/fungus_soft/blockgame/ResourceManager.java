@@ -1,7 +1,12 @@
 package com.fungus_soft.blockgame;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.HashMap;
+
 import javax.imageio.ImageIO;
+
+import jaco.mp3.player.MP3Player;
 
 public class ResourceManager {
 
@@ -10,15 +15,29 @@ public class ResourceManager {
             return ImageIO.read(ResourceManager.class.getClassLoader().getResourceAsStream("textures/" + path));
         } catch (Exception e) {
             new ResourceNotFoundException(e).printStackTrace();
-            return null;
+            
+            try {
+                return ImageIO.read(ResourceManager.class.getClassLoader().getResourceAsStream("textures/blocks/missing.png"));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                return null;
+            }
         }
     }
 
-    public static void playSound(String path) {
-    }
+    private static HashMap<String, MP3Player> mp3cache = new HashMap<>();
 
     public static void playSoundAsync(String path) {
         //new Thread(() -> playSound(path)).start();
+        if (mp3cache.containsKey(path)) {
+            mp3cache.get(path).play();
+            return;
+        }
+        Threads.runAsync(() -> {
+            MP3Player p = new MP3Player(ResourceManager.class.getClassLoader().getResource(path));
+            p.play();
+            mp3cache.put(path, p);
+        });
     }
 
 }

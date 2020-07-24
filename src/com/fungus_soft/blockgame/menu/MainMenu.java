@@ -18,9 +18,9 @@ public class MainMenu extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public String title = "BlockGame";
     public BufferedImage bg;
     public BufferedImage air;
+    public static BufferedImage title, titleS;
     public Color c;
     public int in = 0;
     public int move;
@@ -28,30 +28,30 @@ public class MainMenu extends JPanel {
     public JButton sp;
     public JButton mp;
     public JButton st;
-    public JButton cred;
+    public JButton cr;
 
     public int fps;
     private long fps2;
     private int fps3;
-    //private long renderTime;
 
     public MainMenu() {
         this.bg = ResourceManager.getTexture("menu.png");
         this.air = ResourceManager.getTexture("blocks/air.png");
+        MainMenu.title = ResourceManager.getTexture("title.png");
+        MainMenu.titleS = ResourceManager.getTexture("title-small.png");
         this.setLayout(null);
         this.setOpaque(false);
-        this.c = new Color(air.getRGB(0, 0));
+        c = new Color(207,238,245);
 
         sp = (JButton)add(new JButton("Singleplayer"));
         mp = (JButton)add(new JButton("Multiplayer"));
         st = (JButton)add(new JButton("Settings"));
-        cred = (JButton)add(new JButton("Credits"));
+        cr = (JButton)add(new JButton("Credits"));
+        JButton[] btns = {sp,mp,st,cr};
+        for (JButton b : btns) b.setFocusable(false);
 
-        Color c = new Color(238,238,238,230);
-        sp.setBackground(c);
-        mp.setBackground(c);
-        st.setBackground(c);
-        cred.setBackground(c);
+        Color bc = new Color(204,204,204,230);
+        for (JButton b : btns) b.setBackground(bc);
 
         // TODO
         mp.setEnabled(false);
@@ -86,21 +86,20 @@ public class MainMenu extends JPanel {
         g.setColor(Color.BLACK);
 
         super.paint(g);
-        g.setFont(new Font("Dialog", 1, 48));
-        g.drawString(title, (getWidth()/2) - (title.length()*14), 60);
+        g.drawImage(title, getWidth()/2 - title.getWidth()/2, 60, null);
         g.setFont(new Font("Dialog", 0, 12));
 
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(5, getHeight()-21, 146, 29);
+        g.fillRect(5, getHeight()-22, 112, 30);
         g.setColor(Color.BLACK);
-        g.drawString("\u00A9 2020 by Fungus Software", 10, getHeight()-6);
-        g.setColor(Color.BLACK);
+        g.drawString("Copyright \u00A9 2020", 12, getHeight()-6);
 
         int btnWidth = 300;
         sp.setBounds((getWidth()/2) - (btnWidth/2), 150, btnWidth, 40);
-        mp.setBounds((getWidth()/2) - (btnWidth/2), 200, btnWidth, 40);
-        st.setBounds((getWidth()/2) - (btnWidth/2), 275, (btnWidth/2)-4, 40);
-        cred.setBounds((getWidth()/2), 275, (btnWidth/2)-4, 40);
+        mp.setBounds((getWidth()/2) - (btnWidth/2), 202, btnWidth, 40);
+        st.setBounds((getWidth()/2) - (btnWidth/2), 254, btnWidth, 40);
+        cr.setBounds((getWidth()/2) - (btnWidth/2), 306, btnWidth, 40);
+        
 
         if (move >= getMoveRate()) {
             in += 1;
@@ -112,7 +111,7 @@ public class MainMenu extends JPanel {
     }
 
     private int getMoveRate() {
-        return fps/50; // Move 50/sec
+        return fps/60; // Move 40/sec
     }
 
 }

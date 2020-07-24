@@ -17,12 +17,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import com.fungus_soft.blockgame.entities.Entity;
 import com.fungus_soft.blockgame.entities.Player;
 import com.fungus_soft.blockgame.entities.Zombie;
 import com.fungus_soft.blockgame.menu.CreditsMenu;
 import com.fungus_soft.blockgame.menu.MainMenu;
+import com.fungus_soft.blockgame.menu.SplashScreen;
 import com.fungus_soft.blockgame.world.Block;
 import com.fungus_soft.blockgame.world.Blocks;
 import com.fungus_soft.blockgame.world.WorldLoadingScreen;
@@ -58,14 +60,21 @@ public class BlockGame extends JFrame {
 
         menu = new MainMenu();
         menu.sp.addActionListener(l -> startGame());
-        menu.cred.addActionListener(l -> {
-            ResourceManager.playSound("click.wav");
+        menu.cr.addActionListener(l -> {
+            ResourceManager.playSoundAsync("sounds/click-trim.mp3");
             this.setContentPane(new CreditsMenu()); 
             this.validate();
         });
 
-        this.setTitle("BlockGame");
-        this.setContentPane(menu);
+        this.setTitle("The Incredible Game");
+        setContentPane(new SplashScreen());
+        Timer timer = new Timer(3100, e -> {
+            setContentPane(menu);
+            validate();
+        });
+        timer.setRepeats(false);
+        timer.start(); 
+
         this.setDefaultCloseOperation(3);
         this.setSize(875, 600);
         this.setLocationRelativeTo(null);
@@ -105,6 +114,9 @@ public class BlockGame extends JFrame {
                 for (Entity e : world.getEntities())
                     e.paint(g);
 
+                world.entitiesToAdd.forEach(e -> world.getEntities().add(e));
+                world.entitiesToAdd.clear();
+
                 player.getLookingAt(g); // Draw outline
                 g.drawString(fps + "fps", getWidth() - 40, 15);
 
@@ -118,6 +130,7 @@ public class BlockGame extends JFrame {
 
                 fps3++;
                 isRendering = false;
+
                 render.repaint();
             }
         };

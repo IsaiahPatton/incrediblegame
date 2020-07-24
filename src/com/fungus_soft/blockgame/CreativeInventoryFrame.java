@@ -28,7 +28,7 @@ public class CreativeInventoryFrame extends FrameDisplayer {
         this.setLayout(null);
         for (Block b : Blocks.blocks.values()) {
             JLabel l = new JLabel();
-            l.setIcon(new ImageIcon(b.getTexture()));
+            l.setIcon(new ImageIcon(b.getTexture(null, null)));
             l.setBounds(pos, ypos, 32, 32);
             MouseAdapter ma = new MouseAdapter() {
                 @Override

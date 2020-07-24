@@ -2,11 +2,12 @@ Game
 ============
 Developed using Java Swing
 
-Made by Isaiah Patton
+
 
 Attribution
 ============
 
-Button "Click" sound by Sheyvan from https://freesound.org/people/Sheyvan/sounds/475188/ and is released under CC 0 (Public Domain)
+Button "Click" sound by Sheyvan from freesound.org/people/Sheyvan and is released under CC-0
+Log, lava, and tree textures are from OpenGameArt.org and are released under CC-0
 
-BIRCH_LOG, OAK_LOG, LAVA, and OAK_SAPLING textures are from OpenGameArt.org and are released under CC 0 (Public Domain)
+Jaco Mp3 Player by Cristian Sulea

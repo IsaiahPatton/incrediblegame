@@ -6,7 +6,7 @@ import com.fungus_soft.blockgame.world.blocks.*;
 
 public class Blocks {
 
-    // Can store upto Integer.MAX_VALUE blocks
+    // Can store up to Integer.MAX_VALUE blocks
     public static HashMap<Integer, Block> blocks;
     public static HashMap<String, Block> byName;
 
@@ -21,7 +21,7 @@ public class Blocks {
                 new BlockGrass(),
                 new BlockOakPlanks(),
                 new BlockOakSapling(),
-                new BlockBedrock(),
+                new BlockDarkrock(),
                 new BlockFullGrass(),
                 new BlockBricks(),
                 new BlockOakLog(),
@@ -33,9 +33,23 @@ public class Blocks {
                 new BlockLeaves(),
                 new BlockBookshelf(),
                 new BlockSand(),
+                new BlockSnow(),
+                new BlockICe(),
+                new BlockWireH(),
+                new BlockWireV(),
+                new BlockWireCorner(),
+                new BlockLamp(),
+                new BlockCopper(),
+                new BlockGold(),
+                new BlockBomb(),
+                new BlockSolarPanel(),
+                new BlockSwitch(),
+                new BlockZombie(),
+                new BlockBricksBlue(),
+                new BlockBricksGold(),
+                new BlockBricksGray(),
         };
-        for (Block b : arr)
-            addBlock(b);
+        for (Block b : arr) addBlock(b);
     }
 
     public static Block getBlockById(int id) {
@@ -43,9 +57,8 @@ public class Blocks {
     }
 
     public static void addBlock(Block b) {
-        System.out.println("Registering block '" + b.getName() + "' with id '" + blocks.size() + "'");
-        b.id = blocks.size();
-        blocks.put(blocks.size(), b);
+        System.out.println("Registering block '" + b.getName() + "' with id '" + (b.id = blocks.size()) + "'");
+        blocks.put(b.id, b);
         byName.put(b.getName(), b);
     }
 
