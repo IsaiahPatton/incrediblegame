@@ -36,7 +36,7 @@ public class SplashScreen extends JPanel {
             y += 6;
         i++;
 
-        txt = "Copyright © 2020 Fungus Software";
+        txt = "Copyright \u00A9 2020 Fungus Software";
         f = 16f;
         g.setFont(g.getFont().deriveFont(f));
         if (i > 500) g.drawString(txt, (getWidth()/2) - txt.length()*((int)f / 4) - 2, (getHeight()/2) + 128);
