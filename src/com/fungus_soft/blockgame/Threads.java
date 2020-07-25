@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Threads {
 
-    public static final ExecutorService POOL = Executors.newFixedThreadPool(100, new ThreadFactory() {
+    public static final ExecutorService POOL = Executors.newFixedThreadPool(50, new ThreadFactory() {
         final AtomicInteger counter = new AtomicInteger(0);
 
         @Override

@@ -15,7 +15,7 @@ public class ResourceManager {
             return ImageIO.read(ResourceManager.class.getClassLoader().getResourceAsStream("textures/" + path));
         } catch (Exception e) {
             new ResourceNotFoundException(e).printStackTrace();
-            
+
             try {
                 return ImageIO.read(ResourceManager.class.getClassLoader().getResourceAsStream("textures/blocks/missing.png"));
             } catch (IOException e1) {
@@ -28,15 +28,14 @@ public class ResourceManager {
     private static HashMap<String, MP3Player> mp3cache = new HashMap<>();
 
     public static void playSoundAsync(String path) {
-        //new Thread(() -> playSound(path)).start();
         if (mp3cache.containsKey(path)) {
             mp3cache.get(path).play();
             return;
         }
         Threads.runAsync(() -> {
             MP3Player p = new MP3Player(ResourceManager.class.getClassLoader().getResource(path));
-            p.play();
             mp3cache.put(path, p);
+            p.play();
         });
     }
 

@@ -1,6 +1,10 @@
 package com.fungus_soft.blockgame.world;
 
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Locale;
 import java.util.TimerTask;
 
@@ -21,11 +25,31 @@ public abstract class Block {
     }
 
     public Image getTexture(World world, BlockData dat) {
-        return null == texture ? texture = image(getResourceName().toLowerCase() + ".png") : texture;
+        return null == texture ? texture = toCompatibleImage(image(getResourceName().toLowerCase() + ".png")) : texture;
     }
 
-    public Image image(String i) {
-        return ResourceManager.getTexture("blocks/" + i).getScaledInstance(32, 32, 0);
+    private BufferedImage toCompatibleImage(BufferedImage image) {
+        GraphicsConfiguration gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+
+        // if image is already compatible and optimized for current system  settings, simply return it
+        if (image.getColorModel().equals(gfxConfig.getColorModel()))
+            return image;
+
+        // image is not optimized, so create a new image that is
+        BufferedImage newImage = gfxConfig.createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+
+        // get the graphics context of the new image to draw the old image on
+        Graphics2D g2d = newImage.createGraphics();
+
+        // actually draw the image and dispose of context no longer needed
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+
+        return newImage; 
+    }
+
+    public BufferedImage image(String i) {
+        return ResourceManager.getTexture("blocks/" + i);
     }
 
     public int getId() {
@@ -59,14 +83,6 @@ public abstract class Block {
         BlockData left  = world.locationToBlock.get((x - 1) + "-" + y);
         BlockData right = world.locationToBlock.get((x + 1) + "-" + y);
         return new BlockData[]{up, down, left, right};
-    }
-
-    public Block[] getAround(World world, int x, int y) {
-        Block up    = world.getBlockAt(x, y - 1);
-        Block down  = world.getBlockAt(x, y + 1);
-        Block left  = world.getBlockAt(x - 1, y);
-        Block right = world.getBlockAt(x + 1, y);
-        return new Block[]{up, down, left, right};
     }
 
     public int isPowered(World world, int x, int y) {

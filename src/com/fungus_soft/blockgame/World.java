@@ -1,5 +1,6 @@
 package com.fungus_soft.blockgame;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -124,35 +125,52 @@ public class World implements IDrawable {
     }
 
     boolean startTick = false;
+    private Color AIR_COLOR = new Color(207,238,245);
 
     @Override
     public void paint(Graphics g) {
-        if (width == 0) width = BlockGame.getGame().getWidth() / 32;
-        if (height == 0) height = BlockGame.getGame().getHeight() / 32;
+        if (width == 0 || true) width = BlockGame.getGame().getWidth() / 32;
+        if (height == 0 || true) height = BlockGame.getGame().getHeight() / 32;
 
-        for (int h = 0; h < height; h++) {
-            for (int w = 0; w < width; w++) {
-                BlockData dat = locationToBlock.getOrDefault(w + "-" + h, null);
-                int id = (h == height-1) ? Blocks.byName.get("Stone").getId() : 0;
-                if (h == height-2) id = 3;
-                if (h == height-3) id = 4;
-
-                if (dat == null)
-                    locationToBlock.put(new Location(w, h).toString(), new BlockData(w, h, id));
+        if (!startTick) {
+            for (int h = 0; h < height; h++) {
+                for (int w = 0; w < width; w++) {
+                    BlockData dat = locationToBlock.getOrDefault(w + "-" + h, null);
+                    int id = (h == height-1) ? Blocks.byName.get("Stone").getId() : 0;
+                    if (h == height-2) id = 3;
+                    if (h == height-3) id = 4;
+    
+                    if (dat == null)
+                        locationToBlock.put(new Location(w, h).toString(), new BlockData(w, h, id));
+                }
             }
         }
 
-        for (BlockData i : locationToBlock.values()) {
-            g.drawImage(Blocks.getBlockById(i.blockType).getTexture(this, i), i.x * 32, i.y * 32, null);
-            if (!startTick) {
-                java.util.Timer t = new java.util.Timer();
-                t.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Blocks.getBlockById(i.blockType).tick(World.this, i, this);
-                        if (locationToBlock.get(i.x + "-" + i.y).blockType != i.blockType) t.cancel();
-                    }
-                }, 20, 20);
+        g.setColor(AIR_COLOR);
+        g.fillRect(0, 0, width*32, height*32);
+        g.setColor(Color.BLACK);
+
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                if (!locationToBlock.containsKey(w + "-" + h))
+                    locationToBlock.put(w + "-" + h, new BlockData(w, h, 0));
+
+                BlockData i = locationToBlock.get(w + "-" + h);
+                if (i.blockType == 0)
+                    continue;
+
+                g.drawImage(Blocks.getBlockById(i.blockType).getTexture(this, i), i.x * 32, i.y * 32, null);
+
+                if (!startTick) {
+                    java.util.Timer t = new java.util.Timer();
+                    t.scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Blocks.getBlockById(i.blockType).tick(World.this, i, this);
+                            if (locationToBlock.get(i.x + "-" + i.y).blockType != i.blockType) t.cancel();
+                        }
+                    }, 20, 20);
+                }
             }
         }
         startTick = true;

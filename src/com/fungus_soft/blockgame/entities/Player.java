@@ -88,7 +88,7 @@ public class Player extends Entity {
     public void paint(Graphics g) {
        super.paint(g);
        invOverlay.paint(g);
-       if (this.getBlockUnder() == Blocks.byName.get("World Portal").getId()) {
+       if (this.getBlockUnder() == 12) {
            if (changingWorlds)
                return;
            changingWorlds = true;

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package jaco.mp3.player;
 
 import jaco.mp3.resources.Decoder;
@@ -51,7 +50,6 @@ import javax.swing.JPanel;
  */
 public class MP3Player extends JPanel {
 
-  /** serialVersionUID */
   private static final long serialVersionUID = 1L;
 
   private static final Logger LOGGER = Logger.getLogger(MP3Player.class.getName());
@@ -74,39 +72,24 @@ public class MP3Player extends JPanel {
   private transient volatile int playingSourceVolume = 0;
 
   public MP3Player() {
-    init();
   }
 
   public MP3Player(File file) {
     add(file);
-    init();
   }
 
   public MP3Player(File... files) {
-
-    for (File file : files) {
+    for (File file : files)
       add(file);
-    }
-
-    init();
   }
 
   public MP3Player(URL url) {
     add(url);
-    init();
   }
 
   public MP3Player(URL... urls) {
-
-    for (URL url : urls) {
+    for (URL url : urls)
       add(url);
-    }
-
-    init();
-  }
-
-  private void init() {
-    new MP3PlayerThemeDefault().apply(this);
   }
 
   /**
@@ -121,29 +104,19 @@ public class MP3Player extends JPanel {
           playlist.add(file);
         }
       }
-    }
-
-    else if (file.isDirectory()) {
-
+    } else if (file.isDirectory()) {
       File[] files = file.listFiles();
 
-      for (File file2 : files) {
-        if (file2.isFile() || recursively) {
+      for (File file2 : files)
+        if (file2.isFile() || recursively)
           add(file2, recursively);
-        }
-      }
-    }
-
-    else {
-      throw new IllegalArgumentException("WTF is this? ( " + file + " )");
-    }
+    } else throw new IllegalArgumentException("WTF is this? ( " + file + " )");
 
     return this;
   }
 
   /**
-   * Appends the specified file (or all the files, recursively, if represents a
-   * folder) to the end of the play list.
+   * Appends the specified file (or all the files, recursively, if represents a folder) to the end of the play list.
    */
   public MP3Player add(File file) {
     add(file, true);
@@ -160,18 +133,10 @@ public class MP3Player extends JPanel {
     return this;
   }
 
-  public void setTheme(MP3PlayerTheme theme) {
-    removeAll();
-    theme.apply(this);
-    revalidate();
-    repaint();
-  }
-
   /**
    * Starts the play (or resume if is paused).
    */
   public void play() {
-
     synchronized (MP3Player.this) {
       if (isPaused) {
         isPaused = false;
@@ -179,12 +144,10 @@ public class MP3Player extends JPanel {
         return;
       }
     }
-
     stop();
 
-    if (playlist.size() == 0) {
+    if (playlist.size() == 0)
       return;
-    }
 
     synchronized (MP3Player.this) {
       isStopped = false;
@@ -198,37 +161,29 @@ public class MP3Player extends JPanel {
           InputStream inputStream = null;
 
           try {
-
             Object playlistObject;
 
             synchronized (MP3Player.this) {
               playlistObject = playlist.get(playingIndex);
             }
 
-            if (playlistObject instanceof File) {
+            if (playlistObject instanceof File)
               inputStream = new FileInputStream((File) playlistObject);
-            } else if (playlistObject instanceof URL) {
+            else if (playlistObject instanceof URL)
               inputStream = ((URL) playlistObject).openStream();
-            } else {
-              throw new IOException("this is impossible; how come the play list contains this kind of object? :: " + playlistObject.getClass());
-            }
+            else throw new IOException("this is impossible; how come the play list contains this kind of object? :: " + playlistObject.getClass());
 
             SoundStream soundStream = new SoundStream(inputStream);
             Decoder decoder = new Decoder();
 
             while (true) {
-
               synchronized (MP3Player.this) {
-
-                if (isStopped) {
+                if (isStopped)
                   break;
-                }
 
                 if (isPaused) {
-
-                  if (playingSource != null) {
+                  if (playingSource != null)
                     playingSource.flush();
-                  }
 
                   playingSourceVolume = volume;
 
@@ -243,15 +198,11 @@ public class MP3Player extends JPanel {
               }
 
               try {
-
                 Frame frame = soundStream.readFrame();
-
-                if (frame == null) {
+                if (frame == null)
                   break;
-                }
 
                 if (playingSource == null) {
-
                   int frequency = frame.frequency();
                   int channels = (frame.mode() == Frame.SINGLE_CHANNEL) ? 1 : 2;
 
@@ -272,17 +223,14 @@ public class MP3Player extends JPanel {
                 int len = output.getBufferLength();
 
                 if (playingSourceVolume != volume) {
-
                   if (playingSourceVolume > volume) {
                     playingSourceVolume -= 10;
-                    if (playingSourceVolume < volume) {
+                    if (playingSourceVolume < volume)
                       playingSourceVolume = volume;
-                    }
                   } else {
                     playingSourceVolume += 10;
-                    if (playingSourceVolume > volume) {
+                    if (playingSourceVolume > volume)
                       playingSourceVolume = volume;
-                    }
                   }
 
                   setVolume(playingSource, playingSourceVolume);
@@ -291,30 +239,21 @@ public class MP3Player extends JPanel {
                 playingSource.write(toByteArray(buffer, offs, len), 0, len * 2);
 
                 soundStream.closeFrame();
-              }
-
-              catch (Exception e) {
+              } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "unexpected problems while playing " + toString(), e);
                 break;
               }
             }
 
-            //
             // source is null at this point only if first frame is null
             // this means that probably the file is not a mp3
-
-            if (playingSource == null) {
+            if (playingSource == null)
               LOGGER.log(Level.INFO, "source is null because first frame is null, so probably the file is not a mp3");
-            }
-
             else {
-
               synchronized (MP3Player.this) {
-                if (!isStopped) {
+                if (!isStopped)
                   playingSource.drain();
-                } else {
-                  playingSource.flush();
-                }
+                else playingSource.flush();
               }
 
               playingSource.stop();
@@ -328,9 +267,7 @@ public class MP3Player extends JPanel {
             } catch (Exception e) {
               LOGGER.log(Level.WARNING, "error closing the sound stream", e);
             }
-          }
-
-          catch (IOException e) {
+          } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "unable to open the input stream", e);
           }
 
@@ -347,24 +284,18 @@ public class MP3Player extends JPanel {
           boolean skipForwardAllowed;
 
           synchronized (MP3Player.this) {
-
-            //
             // take the value before reset
-
             skipForwardAllowed = !isStopped;
 
-            //
             // reset values
-
             isPaused = false;
             isStopped = true;
           }
 
           playingThread = null;
 
-          if (skipForwardAllowed) {
+          if (skipForwardAllowed)
             skipForward();
-          }
         }
       };
 
@@ -379,10 +310,8 @@ public class MP3Player extends JPanel {
   }
 
   public void pause() {
-
-    if (!isPlaying()) {
+    if (!isPlaying())
       return;
-    }
 
     synchronized (MP3Player.this) {
       isPaused = true;
@@ -397,7 +326,6 @@ public class MP3Player extends JPanel {
   }
 
   public void stop() {
-
     synchronized (MP3Player.this) {
       isPaused = false;
       isStopped = true;
@@ -414,14 +342,11 @@ public class MP3Player extends JPanel {
   }
 
   public boolean isStopped() {
-    synchronized (MP3Player.this) {
-      return isStopped;
-    }
+    synchronized (MP3Player.this) {return isStopped;}
   }
 
   /**
-   * Forces the player to play next mp3 in the play list (or random if shuffle
-   * is turned on).
+   * Forces the player to play next mp3 in the play list (or random if shuffle is turned on).
    * 
    * @see #play()
    */
@@ -430,8 +355,7 @@ public class MP3Player extends JPanel {
   }
 
   /**
-   * Forces the player to play previous mp3 in the play list (or random if
-   * shuffle is turned on).
+   * Forces the player to play previous mp3 in the play list (or random if shuffle is turned on).
    * 
    * @see #play()
    */
@@ -440,32 +364,27 @@ public class MP3Player extends JPanel {
   }
 
   private void skip(int items) {
-
-    if (playlist.size() == 0) {
+    if (playlist.size() == 0)
       return;
-    }
 
     boolean playAllowed = isPlaying();
 
-    if (shuffle) {
+    if (shuffle)
       playingIndex = RANDOM.nextInt(playlist.size());
-    }
-
     else {
-
       playingIndex += items;
 
       if (playingIndex > playlist.size() - 1) {
-        if (repeat) {
+        if (repeat)
           playingIndex = 0;
-        } else {
+        else {
           playingIndex = playlist.size() - 1;
           playAllowed = false;
         }
       } else if (playingIndex < 0) {
-        if (repeat) {
+        if (repeat)
           playingIndex = playlist.size() - 1;
-        } else {
+        else {
           playingIndex = 0;
           playAllowed = false;
         }
@@ -474,9 +393,8 @@ public class MP3Player extends JPanel {
 
     stop();
 
-    if (playAllowed) {
+    if (playAllowed)
       play();
-    }
   }
 
   /**
@@ -490,10 +408,8 @@ public class MP3Player extends JPanel {
    *           if the volume is not in interval [0..100]
    */
   public MP3Player setVolume(int volume) {
-
-    if (volume < 0 || volume > 100) {
+    if (volume < 0 || volume > 100)
       throw new IllegalArgumentException("Wrong value for volume, must be in interval [0..100].");
-    }
 
     this.volume = volume;
 
@@ -515,7 +431,6 @@ public class MP3Player extends JPanel {
    *          true if shuffle should be turned on, or false for turning off
    */
   public MP3Player setShuffle(boolean shuffle) {
-
     this.shuffle = shuffle;
 
     return this;
@@ -540,9 +455,7 @@ public class MP3Player extends JPanel {
    *          true if repeat should be turned on, or false for turning off
    */
   public MP3Player setRepeat(boolean repeat) {
-
     this.repeat = repeat;
-
     return this;
   }
 
@@ -557,9 +470,7 @@ public class MP3Player extends JPanel {
   }
 
   private void setVolume(SourceDataLine source, int volume) {
-
     try {
-
       FloatControl gainControl = (FloatControl) source.getControl(FloatControl.Type.MASTER_GAIN);
       BooleanControl muteControl = (BooleanControl) source.getControl(BooleanControl.Type.MUTE);
 
@@ -569,9 +480,7 @@ public class MP3Player extends JPanel {
         muteControl.setValue(false);
         gainControl.setValue((float) (Math.log(volume / 100d) / Math.log(10.0) * 20.0));
       }
-    }
-
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.log(Level.WARNING, "unable to set the volume to the provided source", e);
     }
   }
@@ -584,9 +493,8 @@ public class MP3Player extends JPanel {
    */
   public int getPosition() {
     int pos = 0;
-    if (playingSource != null) {
+    if (playingSource != null)
       pos = (int) (playingSource.getMicrosecondPosition() / 1000);
-    }
     return pos;
   }
 

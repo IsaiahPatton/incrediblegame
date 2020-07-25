@@ -37,7 +37,7 @@ public class BlockGame extends JFrame {
     private static JPanel render;
     public static World world;   // The only world
     public static Player player; // The only player
-    
+
     public CreativeInventoryFrame inv;   // The creative inventory
     public WorldLoadingScreen wload; // The world load screen
 
@@ -45,6 +45,7 @@ public class BlockGame extends JFrame {
     public static boolean isRendering;
     public static boolean isChanging;
     public boolean debugInfo;
+
     public int fps;
     private long fps2;
     private int fps3;
@@ -61,7 +62,7 @@ public class BlockGame extends JFrame {
         menu = new MainMenu();
         menu.sp.addActionListener(l -> startGame());
         menu.cr.addActionListener(l -> {
-            ResourceManager.playSoundAsync("sounds/click-trim.mp3");
+            ResourceManager.playSoundAsync("sounds/click.mp3");
             this.setContentPane(new CreditsMenu()); 
             this.validate();
         });
@@ -99,8 +100,10 @@ public class BlockGame extends JFrame {
 
             @Override
             public void paint(Graphics g) {
-                if (isRendering || isChanging)
+                if (isRendering || isChanging) {
+                    fps3++;
                     return;
+                }
 
                 isRendering = true;
                 long start = System.currentTimeMillis();
@@ -109,6 +112,7 @@ public class BlockGame extends JFrame {
                     fps=fps3;
                     fps3=0;
                 }
+
                 world.paint(g);
 
                 for (Entity e : world.getEntities())
@@ -131,7 +135,8 @@ public class BlockGame extends JFrame {
                 fps3++;
                 isRendering = false;
 
-                render.repaint();
+                g.dispose();
+                if (!isRendering) render.repaint();
             }
         };
 
@@ -188,7 +193,6 @@ public class BlockGame extends JFrame {
                         break;
                     case KeyEvent.VK_Z: {
                         world.addEntity(new Zombie());
-                        //world.addEntity(new Cow());
                         break;
                     }
                 }
@@ -204,7 +208,7 @@ public class BlockGame extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point loc = MouseInfo.getPointerInfo().getLocation();
-                Point osc = BlockGame.getGame().getLocationOnScreen();
+                Point osc = getLocationOnScreen();
                 int mx = ((loc.x - osc.x) / 32);
                 int my = ((loc.y - osc.y) / 32) - 1;
                 if (mx < 0 || my < 0)
@@ -222,7 +226,6 @@ public class BlockGame extends JFrame {
 
         inGame = true;
         this.setContentPane(render);
-        //this.setVisible(true);
         this.validate();
         this.requestFocus();
     }

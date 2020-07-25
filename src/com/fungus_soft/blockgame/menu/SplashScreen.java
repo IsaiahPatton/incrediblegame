@@ -32,8 +32,8 @@ public class SplashScreen extends JPanel {
         String txt = "Fungus Interactive";
         if (y > 0) g.drawString(txt, (getWidth()/2) - ((txt.length()-1)*((int)f / 4)) + (int)f/6, y);
 
-        if (y < (getHeight()/2) - 32 && i > 190)
-            y += 4;
+        if (y < (getHeight()/2) - 32 && i > 200)
+            y += 6;
         i++;
 
         txt = "Copyright © 2020 Fungus Software";
