@@ -27,6 +27,11 @@ public class BlockCopper extends Block {
                 if (power > 0)
                     return power;
             }
+            if (bl instanceof BlockSwitch) {
+                BlockSwitch sw = (BlockSwitch)bl;
+                if (!sw.isOn(w, b.x, b.y))
+                    continue;
+            }
             if (bl instanceof BlockCopper) {
                 if (b.x == calling.x && b.y == calling.y) continue;
 

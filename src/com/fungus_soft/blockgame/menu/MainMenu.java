@@ -63,6 +63,7 @@ public class MainMenu extends JPanel {
     public void paint(Graphics g) {
         if (BlockGame.inGame) {
             setEnabled(false);
+            System.out.println("TEST");
             return;
         }
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -100,7 +101,6 @@ public class MainMenu extends JPanel {
         st.setBounds((getWidth()/2) - (btnWidth/2), 254, btnWidth, 40);
         cr.setBounds((getWidth()/2) - (btnWidth/2), 306, btnWidth, 40);
         
-
         if (move >= getMoveRate()) {
             in += 1;
             move =0;

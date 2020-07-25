@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 public class FrameDisplayer extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    private JPanel cp;
     private int w,h;
     private Color bg;
 

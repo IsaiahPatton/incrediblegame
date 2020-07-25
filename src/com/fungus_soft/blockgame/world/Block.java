@@ -77,6 +77,9 @@ public abstract class Block {
         return 0;
     }
 
+    public void preSetBlock(World world, int x, int y) {
+    }
+
     public BlockData[] getAroundData(World world, int x, int y) {
         BlockData up    = world.locationToBlock.get(x + "-" + (y - 1));
         BlockData down  = world.locationToBlock.get(x + "-" + (y + 1));

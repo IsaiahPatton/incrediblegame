@@ -2,6 +2,8 @@ package com.fungus_soft.blockgame.world;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -13,7 +15,7 @@ public class WorldLoadingScreen extends FrameDisplayer {
     public boolean vis;
     public static ArrayList<JLabel> list;
     private String hover;
-    private int pw,z;
+    private int pw;
 
     public WorldLoadingScreen() {
         super();
@@ -31,17 +33,15 @@ public class WorldLoadingScreen extends FrameDisplayer {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setColor(Color.WHITE);
         g.setFont(g.getFont().deriveFont(32f));
         g.drawString(hover = "Loading world...", (getWidth()/2)-(hover.length()*6)-10, 100);
-        g.fillRect(20, 150, pw/2, 15);
-        if (pw < 800)
-            pw++;
-        if (z > 1) z=0;
-        z++;
-        if (pw >= 800) {
-            pw = 0;
+
+        pw++;
+        if (pw >= 150) {
             setVisible(false);
+            pw = 0;
         }
         this.repaint();
     }

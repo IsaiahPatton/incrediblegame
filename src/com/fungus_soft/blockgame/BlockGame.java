@@ -2,7 +2,6 @@ package com.fungus_soft.blockgame;
 
 import java.awt.AWTException;
 import java.awt.Graphics;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -38,8 +37,8 @@ public class BlockGame extends JFrame {
     public static World world;   // The only world
     public static Player player; // The only player
 
-    public CreativeInventoryFrame inv;   // The creative inventory
-    public WorldLoadingScreen wload; // The world load screen
+    public CreativeInventoryFrame inv; // The creative inventory
+    public WorldLoadingScreen wload;   // The world load screen
 
     public static boolean inGame;
     public static boolean isRendering;
@@ -207,15 +206,13 @@ public class BlockGame extends JFrame {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Point loc = MouseInfo.getPointerInfo().getLocation();
-                Point osc = getLocationOnScreen();
-                int mx = ((loc.x - osc.x) / 32);
-                int my = ((loc.y - osc.y) / 32) - 1;
-                if (mx < 0 || my < 0)
-                    return;
+                Point p = e.getPoint();
+                int mx = p.x/32;
+                int my = (p.y/32)-1;
 
                 if (e.getButton() == 3) {
                     Block b = player.getSelectedBlock();
+                    b.preSetBlock(world, mx, my);
                     world.setBlockAt(mx, my, b.getId());
                 }
 
